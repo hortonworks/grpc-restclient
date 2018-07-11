@@ -1,3 +1,11 @@
+/*
+ * Copyright  (c) 2011-2018, Hortonworks Inc.  All rights reserved.
+ *
+ * Except as expressly permitted in a written agreement between your
+ * company and Hortonworks, Inc, any use, reproduction, modification,
+ * redistribution, sharing, lending or other exploitation of all or
+ * any part of the contents of this file is strictly prohibited.
+ */
 package com.hw.qe.grpc.rest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -20,7 +28,6 @@ public class GRPCClientApplication extends Application<GRPCClientConfiguration> 
 
     @Override
     public void initialize(Bootstrap<GRPCClientConfiguration> bootstrap) {
-        // nothing to do yet
         bootstrap.getObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         bootstrap.getObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
@@ -35,9 +42,9 @@ public class GRPCClientApplication extends Application<GRPCClientConfiguration> 
         environment.jersey().register(resource);
 
 
-     /*   final TemplateHealthCheck healthCheck =
-                new TemplateHealthCheck(configuration.getTemplate());
-        environment.healthChecks().register("template", healthCheck);
-        environment.jersey().register(resource);*/
+        final TemplateHealthCheck healthCheck =
+                new TemplateHealthCheck(configuration.getUsage());
+        environment.healthChecks().register("usage", healthCheck);
+        environment.jersey().register(resource);
     }
 }
