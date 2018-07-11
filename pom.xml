@@ -26,6 +26,14 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>${repoid}</id>
+            <name>${reponame}</name>
+            <url>${repourl}</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
