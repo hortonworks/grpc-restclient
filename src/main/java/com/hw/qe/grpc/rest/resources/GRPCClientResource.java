@@ -16,6 +16,7 @@ import com.hw.qe.grpc.rest.api.ReadFileReq;
 import com.hw.qe.grpc.rest.api.UploadFileReq;
 import com.hw.qe.grpc.rest.service.GRPCClientService;
 import org.hw.qe.CommandStatus;
+import org.hw.qe.HwqeException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -55,8 +56,13 @@ public class GRPCClientResource {
     @POST
     @Path("/runcommand")
     @Timed
-    public CommandStatusResponse<String> runCommand(@NotNull @Valid final CommandReq cmdReq) throws Exception {
-        CommandStatus status = clientService.runCommand(cmdReq);
+    public CommandStatusResponse<String> runCommand(@NotNull @Valid final CommandReq cmdReq) {
+        CommandStatus status = null;
+        try{
+            status = clientService.runCommand(cmdReq);
+        } catch (HwqeException ex){
+            return new CommandStatusResponse<String>(-1, ex.getMessage());
+        }
         StringBuilder output = new StringBuilder();
         int code = -1;
         boolean returnVal = status.getCode() == 0 ? true : false;
@@ -82,7 +88,7 @@ public class GRPCClientResource {
     @POST
     @Path("/writetofile")
     @Timed
-    public CommandStatusResponse<Boolean> writeToFile(@NotNull @Valid final UploadFileReq fileReq) throws Exception {
+    public CommandStatusResponse<Boolean> writeToFile(@NotNull @Valid final UploadFileReq fileReq){
         boolean status = clientService.writeToFile(fileReq);
         return new CommandStatusResponse<Boolean>(0, status);
     }
@@ -97,8 +103,13 @@ public class GRPCClientResource {
     @POST
     @Path("/readfile")
     @Timed
-    public CommandStatusResponse<byte[]> readFile(@NotNull @Valid final ReadFileReq fileReq) throws Exception {
-        byte[] content = clientService.readFile(fileReq);
+    public CommandStatusResponse<byte[]> readFile(@NotNull @Valid final ReadFileReq fileReq){
+        byte[] content = null;
+        try{
+            content = clientService.readFile(fileReq);
+        } catch (HwqeException ex){
+            return new CommandStatusResponse(-1, ex.getMessage().getBytes());
+        }
         if( content != null)
             return new CommandStatusResponse<byte[]>(0, content);
         else
